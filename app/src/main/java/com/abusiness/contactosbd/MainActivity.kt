@@ -12,6 +12,8 @@ import android.widget.Toast
 class MainActivity : AppCompatActivity() {
     private lateinit var nameEditText: EditText
     private lateinit var emailEditText:EditText
+    private lateinit var provinEditText: EditText
+    private lateinit var buscaprovEditText:EditText
     private lateinit var salvar:Button
     private lateinit var consltaButton:Button
     private lateinit var bosquejo:TextView
@@ -22,6 +24,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         nameEditText = findViewById(R.id.editTextText)
         emailEditText = findViewById(R.id.editTextText2)
+        provinEditText = findViewById(R.id.editTextText3)
+        buscaprovEditText = findViewById(R.id.editTextText4)
         consltaButton = findViewById(R.id.button2)
         bosquejo = findViewById(R.id.textView)
         salvar = findViewById(R.id.button)
@@ -33,30 +37,33 @@ class MainActivity : AppCompatActivity() {
         salvar.setOnClickListener {
             val name = nameEditText.text.toString().trim()
             val email = emailEditText.text.toString().trim()
+            val provincia = provinEditText.text.toString().trim()
             if  (name.isNotEmpty() && email.isNotEmpty()){
-                val id=db.addContact(name,email) // todo devuelve una referencia exitosa o no
+                val id=db.addContact(name,email,provincia) // todo devuelve una referencia exitosa o no
                 if (id == -1L){
-                    nameEditText.text.clear()
-                    emailEditText.text.clear()
+                    // todo aqui iria un toast avisando de error
+                    Toast.makeText(applicationContext, "guardado", Toast.LENGTH_SHORT).show()
                 }
                     else{
-                        // todo aqui iria un toast avisando de error
-                    Toast.makeText(applicationContext, "guardado", Toast.LENGTH_SHORT).show()
-                    }
+                    nameEditText.text.clear()
+                    emailEditText.text.clear()
+                    provinEditText.text.clear()
+                       }
             }else{
                 // todo ha habido un problema en la base de datos
                Toast.makeText(applicationContext, "te falta algun campo", Toast.LENGTH_SHORT).show()
             }
         }  // todo fin de salvar
         consltaButton.setOnClickListener {
-
+            bosquejo.text="" // todo aqui borramos primero el textview por si le damos directamente al boton buscar y que no se amontonen otras busquedas
             val contacList:List<Contact> = db.getAllContacts()  // es de tipo List<Contact> si no se lo pones lo infiere, pero NO es un String
             // todo este for ya no hace falta porque tenemos el joinToString()
             // implementado en la siguiente variable
             for (contact in contacList){
                 contact.name
                 contact.email
-                bosquejo.append(contact.name+" "+contact.email+"\n") // todo sustituimos el .text por el append
+                contact.provincia
+                bosquejo.append(contact.name+" "+contact.email+" "+contact.provincia+"\n") // todo sustituimos el .text por el append
                 //todo para que en lugar de sobreescribir añada
               //  if(contact.id==variableBusqueda){}
 

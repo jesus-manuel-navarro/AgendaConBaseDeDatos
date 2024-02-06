@@ -11,15 +11,17 @@ class DatabaseHander(context:Context) : SQLiteOpenHelper( context, DATABASE_NAME
     companion object{  // todo para no tener que instanciar la clase con variables, es como una clase dentro de otra clase
         //todo accedes a sus propiedades sin instanciarla
         private const val DATABASE_NAME = "MyDataBase"
-        private const val DATAVASE_VERSION = 1
+        private const val DATAVASE_VERSION = 2 // todo en esta rama cambiamos la version y asi no hace falta
+                                               // todo cambiar la base de datos
         private const val TABLE_NAME ="Contacts"
-        private const val KEY_ID ="id"
+        private const val KEY_ID ="id"  // todo son los nombres de los campos de las columnas de la tabla
         private const val KEY_NAME = "nombre"
         private const val KEY_EMAIL = "email"
+        private const val KEY_PROV = "provincia"
     }
     // todo necesita estos metodos sobreescritos
     override fun onCreate(db: SQLiteDatabase?) {  //todo el interrogante es para no tener que preguntar si la bd es nula o no
-        val createTable = ("CREATE TABLE $TABLE_NAME($KEY_ID INTEGER PRIMARY KEY, $KEY_NAME TEXT, $KEY_EMAIL TEXT)")
+        val createTable = ("CREATE TABLE $TABLE_NAME($KEY_ID INTEGER PRIMARY KEY, $KEY_NAME TEXT, $KEY_EMAIL TEXT, $KEY_PROV TEXT)")
         db?.execSQL(createTable)
     }
 
@@ -29,11 +31,12 @@ class DatabaseHander(context:Context) : SQLiteOpenHelper( context, DATABASE_NAME
         onCreate(db)
     }
 
-    fun addContact(name:String, email:String):Long{
+    fun addContact(name:String, email:String, provincia:String):Long{
         val db = this.writableDatabase  // todo esto abre la base de datos en ese momento abierta
         val values = ContentValues()  // todo crea un conjunto / listas / pares  de valores
         values.put (KEY_NAME,name)
         values.put (KEY_EMAIL,email)
+        values.put (KEY_PROV,provincia)
         val success = db.insert(TABLE_NAME,null, values) // todo por si acaso no pone valores se pone el null
        // db.close()
              return  (success) // todo retorna el valor del exito o el fracos del que programa esta cachimba
@@ -48,12 +51,13 @@ class DatabaseHander(context:Context) : SQLiteOpenHelper( context, DATABASE_NAME
         cursor.use{
             if(cursor.moveToFirst()){
                 do{
-                    val id=it.getInt(it.getColumnIndex(KEY_ID))
+                    val id=it.getInt(it.getColumnIndex(KEY_ID))  //todo
                     val name = it.getString(it.getColumnIndex(KEY_NAME))
                     val email= it.getString(it.getColumnIndex(KEY_EMAIL))
+                    val provincia= it.getString(it.getColumnIndex(KEY_PROV))
 
                //todo guardamos estos valores en la clase data Contact
-                    val contact = Contact(id,name,email)
+                    val contact = Contact(id,name,email,provincia)
 
                     // todo lo de arriba se puede
                     contactList.add(contact)
