@@ -47,11 +47,11 @@ class DatabaseHander(context:Context) : SQLiteOpenHelper( context, DATABASE_NAME
         val db=this.readableDatabase
         val seleciona="SELECT * FROM $TABLE_NAME"
         // todo vamos a crear cursor vector
-        val cursor = db.rawQuery(seleciona,null)
+        val cursor = db.rawQuery(seleciona,null)  // todo creamos un cursor
         cursor.use{
             if(cursor.moveToFirst()){
                 do{
-                    val id=it.getInt(it.getColumnIndex(KEY_ID))  //todo
+                    val id=it.getInt(it.getColumnIndex(KEY_ID))  //todo usamos en los cursores el it como iterador para recorrer el cursor o mover el cursor
                     val name = it.getString(it.getColumnIndex(KEY_NAME))
                     val email= it.getString(it.getColumnIndex(KEY_EMAIL))
                     val provincia= it.getString(it.getColumnIndex(KEY_PROV))
@@ -67,7 +67,33 @@ class DatabaseHander(context:Context) : SQLiteOpenHelper( context, DATABASE_NAME
 
         }
         return contactList
-    }
+    } //todo fin de la funcion getAllContacts()
 
+    @SuppressLint("Range")
+    fun getOnlyProvincias( provincia:String ):List<Contact> {
+        val contactList = mutableListOf<Contact>()
+        val db=this.readableDatabase
+        val seleciona="SELECT * FROM $TABLE_NAME WHERE $KEY_PROV ='$provincia'"
+        // todo vamos a crear cursor vector
+        val cursor = db.rawQuery(seleciona,null)  // todo creamos un cursor
+        cursor.use{
+            if(cursor.moveToFirst()){
+                do{
+                    val id=it.getInt(it.getColumnIndex(KEY_ID))  //todo usamos en los cursores el it como iterador para recorrer el cursor o mover el cursor
+                    val name = it.getString(it.getColumnIndex(KEY_NAME))
+                    val email= it.getString(it.getColumnIndex(KEY_EMAIL))
+                    val provincia= it.getString(it.getColumnIndex(KEY_PROV))
 
+                    //todo guardamos estos valores en la clase data Contact
+                    val contact = Contact(id,name,email,provincia)
+
+                    // todo lo de arriba se puede
+                    contactList.add(contact)
+
+                }while(it.moveToNext())
+            }
+
+        }
+        return contactList
+    } //todo fin de la funcion getAllContacts()
 }   // fin main
